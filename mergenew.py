@@ -14,7 +14,7 @@ for fname in list_files('.'):
     if not next((ext for ext in text_file_exts if fname.endswith(ext)), False):
         continue
 
-    with open(fname, 'r') as fl:
+    with open(fname, mode='r', encoding='utf-8') as fl:
 
         # skip files that have no merge conflicts
         s = fl.read()

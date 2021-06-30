@@ -28,7 +28,7 @@ for fname in list_files('.'):
     if not next((ext for ext in text_file_exts if fname.endswith(ext)), False):
         continue
     #
-    with open(fname, 'r') as fl:
+    with open(fname, mode='r', encoding='utf-8') as fl:
         for id in fl.read().split('0x'):
             id = id[:6].upper()
             match = id_rx.match(id)
