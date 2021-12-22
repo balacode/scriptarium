@@ -1,5 +1,5 @@
 ## -----------------------------------------------------------------------------
-## Python Scripts                                      scriptarium/[mergenew.py]
+## Python Scripts                                         scriptarium/[merge.py]
 ## (c) balarabe@protonmail.com
 ## -----------------------------------------------------------------------------
 
