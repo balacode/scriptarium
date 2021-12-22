@@ -23,12 +23,14 @@ ignore_ids = [
 # in the current folder and its subfolders
 ids6 = {}
 id_rx = re.compile('E[0-9a-fA-F]+')
-for fname in list_files('.'):
+for filename in list_files('.'):
     # skip file types not listed in text_file_exts
-    if not next((ext for ext in text_file_exts if fname.endswith(ext)), False):
+    if not next(
+        (ext for ext in text_file_exts if filename.endswith(ext)), False
+    ):
         continue
     #
-    with open(fname, mode='r', encoding='utf-8') as fl:
+    with open(filename, mode='r', encoding='utf-8') as fl:
         for id in fl.read().split('0x'):
             id = id[:6].upper()
             match = id_rx.match(id)
@@ -42,16 +44,16 @@ for fname in list_files('.'):
             else:
                 ids6[id] = 1
 
-# create dictionary of 3-digit IDs from 6-digit IDs, ignoring the first 'E'
-ids3 = {}
+# create dictionary of 4-digit IDs from 6-digit IDs, ignoring the first 'E'
+ids4 = {}
 for id in ids6:
-    for s in [id[1: 4], id[2: 5], id[3: 6]]:
+    for s in [id[1:5], id[2:6]]:
         if len(s) < 1:
             continue
-        if s in ids3:
-            ids3[s] += 1
+        if s in ids4:
+            ids4[s] += 1
         else:
-            ids3[s] = 1
+            ids4[s] = 1
 
 # print all non-unique 6-digit IDs:
 if True:
@@ -64,13 +66,13 @@ if True:
                 title = False
             print(k + ': ' + str(v))
 
-# print all non-unique 3-digit IDs:
+# print all non-unique 4-digit IDs:
 if True:
     title = True
-    for k, v in ids3.items():
+    for k, v in ids4.items():
         if v > 1:
             if title:
-                print('\n' + 'non-unique ids (3-digit):')
+                print('\n' + 'non-unique ids (4-digit):')
                 title = False
             print(k + ': ' + str(v))
 
@@ -83,17 +85,17 @@ while count > 0:
     id = 'E' + secrets.token_hex(3)[:5].upper()
     if re.match(r'.*\d\d\d.*', id) != None:
         continue
-    if re.match(r'.*[A-Z]{3}.*', id) != None:
+    if re.match(r'.*[A-Z]{4}.*', id) != None:
         continue
     found = False
-    for s in [id[0: 3], id[1: 4], id[2: 5], id[3: 6]]:
-        if s in ids3:
+    for s in [id[0: 4], id[1: 5], id[2: 6]]:
+        if s in ids4:
             found = True
             break
     if found:
         continue
-    for s in [id[0: 3], id[1: 4], id[2: 5], id[3: 6]]:
-        ids3[s] = 1
+    for s in [id[0: 4], id[1: 5], id[2: 6]]:
+        ids4[s] = 1
     print('0x' + id)
     count -= 1
     continue
