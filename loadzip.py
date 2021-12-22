@@ -4,15 +4,24 @@
 ## -----------------------------------------------------------------------------
 
 import os
+import platform
 import re
 import sys
+
 from zipfile import ZipFile
 
 from constants import zip_ignore
 from functions import list_files
 
-# os.chdir('X:\\test') # <- only uncomment for debugging
-cwd = os.getcwd()
+# set the location where zip files are saved
+ps = platform.system()
+if ps == 'Linux' or ps == 'Darwin':
+    zip_dir = '/x/user/zip'
+elif ps == 'Windows':
+    zip_dir = 'Z:\\user\\zip'
+else:
+    print('unknown os:', ps)
+    quit()
 
 # read tag from arguments
 tag = ''
@@ -27,14 +36,19 @@ elif len(sys.argv) > 2:
     print('too many arguments')
     quit()
 
+# only uncomment for debugging:
+# os.chdir('/x/user/scripts/scriptarium')
+# os.chdir('X:\\user\\scripts\\scriptarium')
+cwd = os.getcwd()
+
 # locate the most recent zip file
-zip_dir, zip_name, max_time = 'Z:\\', '', ''
+zip_name, max_time = '', ''
 folder = os.path.basename(cwd)
 pat = re.compile('.*-' + folder + tag + '.*\.zip$')
-for fname in os.listdir(zip_dir):
-    path = os.path.join(zip_dir, fname)
-    if os.path.isfile(path) and pat.match(fname) != None:
-        tm = fname[:fname.index('-' + folder)]
+for filename in os.listdir(zip_dir):
+    path = os.path.join(zip_dir, filename)
+    if os.path.isfile(path) and pat.match(filename) != None:
+        tm = filename[:filename.index('-' + folder)]
         if tm > max_time:
             zip_name, max_time = path, tm
 if zip_name == '':
@@ -43,46 +57,46 @@ if zip_name == '':
 
 # get list of files to extract
 zip = ZipFile(zip_name, 'r')
-zfiles = []
+zip_files = []
 for fl in zip.filelist:
     s = fl.filename.lower()
     if next((pat for pat in zip_ignore if re.match(pat, s)), False):
         continue
     if fl.filename[:5] != '.git/':
-        zfiles.append(fl.filename)
+        zip_files.append(fl.filename)
 
 # update changed files
-for fname in zfiles:
-    path = os.path.join(cwd, fname)
+for filename in zip_files:
+    path = os.path.join(cwd, filename)
     if os.path.exists(path):
-        zb = zip.read(fname)
+        zb = zip.read(filename)
         fb = open(path, 'rb').read()
         a = len(zb)
         b = len(fb)
         if zb == fb:
             continue
-        zip.extract(fname)
-        print('*', fname)
+        zip.extract(filename)
+        print('*', filename)
 
 # add new files
-for fname in zfiles:
-    path = os.path.join(cwd, fname)
+for filename in zip_files:
+    path = os.path.join(cwd, filename)
     if not os.path.exists(path):
-        zip.extract(fname)
-        print('+', fname)
+        zip.extract(filename)
+        print('+', filename)
 
 # delete extra files in folder
-for fname in list_files(cwd):
-    if fname.find('.git\\') != -1 or fname.find('.git/') != -1:
+for filename in list_files(cwd):
+    if filename.find('.git\\') != -1 or filename.find('.git/') != -1:
         continue
-    fname = fname.replace(cwd, '').lstrip('/\\').replace('\\', '/')
-    s = fname.lower()
+    filename = filename.replace(cwd, '').lstrip('/\\').replace('\\', '/')
+    s = filename.lower()
     if next((pat for pat in zip_ignore if re.match(pat, s)), False):
-        print('ignored ->', fname)
+        print('ignored ->', filename)
         continue
-    if not fname in zfiles:
-        os.remove(os.path.join(cwd, fname))
-        print('-', fname)
+    if not filename in zip_files:
+        os.remove(os.path.join(cwd, filename))
+        print('-', filename)
 
 zip.close()
 print('\n' + 'loaded ' + zip_name + '\n')
