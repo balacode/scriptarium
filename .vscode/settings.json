@@ -6,6 +6,7 @@
         "gson",
         "mkid",
         "mobi",
+        "Popen",
         "prefs",
         "regs",
         "resx",
