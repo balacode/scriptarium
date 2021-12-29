@@ -18,21 +18,23 @@ for arg in sys.argv[1:]:
     else:
         root = arg
 
-folders = list(os.walk(root, topdown = False))
-for folder in folders:
+dirs = list(os.walk(root, topdown = False))
+for dir in dirs:
 
     # obtain folder's path and list of files and folders
-    path = folder[0]
+    path = dir[0]
     if path == root:
         continue
     os.chdir(path)
 
     # remove .DS_Store MacOS files
-    files = folder[2]
+    files = dir[2]
     if len(files) == 1:
         name = files[0]
         if name == ".DS_Store":
             os.remove(name)
+            if verbose:
+                print('deleted file "'+name+'"')
             files = []
 
     # get folder contents after child folders/files were possibly removed
@@ -41,6 +43,8 @@ for folder in folders:
     # remove empty folder and continue
     if len(contents) == 0:
         os.rmdir(path)
+        if verbose:
+            print('deleted dir "'+path+'"')
         continue
 
     # if folder is not empty, display number of subfolders and files it contains
@@ -51,7 +55,7 @@ for folder in folders:
                 n_dirs += 1
             else:
                 n_files += 1
-        print('"'+path+'" has', n_dirs, 'dir(s) and', n_files, 'file(s)')
+        print('retained dir "'+path+'" has', n_dirs, 'dir(s),', n_files, 'file(s)')
         continue
 
 os.chdir(old_cwd)
