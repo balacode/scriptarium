@@ -1,4 +1,7 @@
-# /scriptarium/[.gitignore]
+# ------------------------------------------------------------------------------
+# Python Scripts                                     scriptarium/[.gitignore.py]
+# (c) balarabe@protonmail.com
+# ------------------------------------------------------------------------------
 
 # MacOS metadata
 .DS_Store
