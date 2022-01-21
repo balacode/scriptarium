@@ -1,7 +1,7 @@
-## -----------------------------------------------------------------------------
-## Python Scripts                                     scriptarium/[constants.py]
-## (c) balarabe@protonmail.com
-## -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# Python Scripts                                      scriptarium/[constants.py]
+# (c) balarabe@protonmail.com
+# ------------------------------------------------------------------------------
 
 # file extensions of source code and other text files
 text_file_exts = [
