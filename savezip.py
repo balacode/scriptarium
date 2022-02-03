@@ -53,16 +53,28 @@ zip = ZipFile(zip_name, 'w')
 # store all matching files in the archive
 file_count = 0
 for name in list_files('.'):
-    # skip file names that match entries in zip_ignore
+
+    size = os.path.getsize(name)
     if name[:2] == '.\\' or name[:2] == './':
-        name = name[2:]
+        name = name[2:]    
+    
+    # skip file names that match entries in zip_ignore 
     s = name.lower()
     if next((pat for pat in zip_ignore if re.match(pat, s)), False):
-        print('ignored ->', name)
-    else:
-        zip.write(name)
-        file_count += 1
+        print('ignored ->', name, '(' + format_size(size) + ')')
+        continue
 
+    # skip likely executable/binary files (files without a file
+    # extension, larger than 1MB, and not in the .git folder)
+    if not '.' in name and size > 1024*1024 and not '.git' in name:
+        print('ignored ->', name, '(' + format_size(size) + ')')
+        continue
+
+    # write the file
+    zip.write(name)
+    file_count += 1
+
+# save the zip
 zip.close()
 if os.path.exists(zip_name):
     size = format_size(os.path.getsize(zip_name))
