@@ -63,21 +63,21 @@ for line in old_lines:
 
     # mark lines with duplicate timestamps
     elif t1 == t2:
-        line += ' (+TIME)'
+        new_lines.append('<<- DUPLICATE_TIME:')
 
     # mark lines with duplicate descriptions
     elif d1 == d2:
-        line += ' (+NOTE)'
+        new_lines.append('<<- DUPLICATE_NOTE:')
 
     # insert missing times
     elif has_timestamp(prev_line):
         tag = get_tag(line)
         if tag != prev_tag and not (': IN (' in line or line.endswith(': IN')):
             m = diff_minutes(prev_line, line)
-            if m <= 5:
-                s = next_second(prev_line[:19]) + ' ' + tag + ': IN (+)'
+            if m <= 15:
+                s = next_second(prev_line[:19]) + ' ' + tag + ': IN () <<-'
             else:
-                s = prev_second(line[:19]) + ' ' + tag + ': IN (++)'
+                s = prev_second(line[:19]) + ' ' + tag + ': IN () <<<-'
             new_lines.append(s)
 
     new_lines.append(line)
