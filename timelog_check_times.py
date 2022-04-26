@@ -54,6 +54,7 @@ with open(file_name, mode='r', encoding='utf-8') as fl:
     old_lines = fl.read().split('\n')
 
 for line in old_lines:
+    line = line.strip()
     t1, d1, t2, d2 = prev_line[:19], prev_line[19:], line[:19], line[19:]
 
     # ignore lines without timestamps
@@ -63,11 +64,11 @@ for line in old_lines:
 
     # mark lines with duplicate timestamps
     elif t1 == t2:
-        new_lines.append('<<- DUPLICATE_TIME:')
+        new_lines.append('<<<< DUPLICATE_TIME')
 
     # mark lines with duplicate descriptions
     elif d1 == d2:
-        new_lines.append('<<- DUPLICATE_NOTE:')
+        new_lines.append('<<<< DUPLICATE_NOTE')
 
     # insert missing times
     elif has_timestamp(prev_line):
@@ -75,9 +76,9 @@ for line in old_lines:
         if tag != prev_tag and not (': IN (' in line or line.endswith(': IN')):
             m = diff_minutes(prev_line, line)
             if m <= 15:
-                s = next_second(prev_line[:19]) + ' ' + tag + ': IN () <<-'
+                s = next_second(prev_line[:19]) + ' ' + tag + ': IN'
             else:
-                s = prev_second(line[:19]) + ' ' + tag + ': IN () <<<-'
+                s = prev_second(line[:19]) + ' ' + tag + ': IN <<<<'
             new_lines.append(s)
 
     new_lines.append(line)
