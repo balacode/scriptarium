@@ -73,7 +73,7 @@ for line in old_lines:
     # insert missing times
     elif has_timestamp(prev_line):
         tag = get_tag(line)
-        if tag != prev_tag and not (': IN (' in line or line.endswith(': IN')):
+        if tag != prev_tag and not (': IN ' in line or line.endswith(': IN')):
             m = diff_minutes(prev_line, line)
             if m <= 15:
                 s = next_second(prev_line[:19]) + ' ' + tag + ': IN'
