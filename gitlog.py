@@ -18,14 +18,14 @@ args = pr.parse_args()
 if args.source == None:
     print('--source not specified')
     quit()
-if args.author == None:
-    print('--author not specified')
-    quit()
 if args.target == None:
     print('--target not specified')
     quit()
 if args.prefix == None:
     args.prefix = ""
+
+if args.author == None:
+    args.author = ""
 
 # change current directory and build repo name
 os.chdir(args.source)
@@ -45,11 +45,12 @@ lines = text.split('\n')
 # filter lines by author name, replace author with repo_name
 text = '\n\n'
 for s in lines:
-    if not args.author in s:
+    if args.author != "" and not args.author in s:
         continue
     s = s[1:len(s)-1] # remove leading and trailing double quotes
     s = s[0:20] + s[26:] # remove timezone e.g. +0100
-    s = s.replace(args.author, repo_name)
+    if args.author != "":
+        s = s.replace(args.author, repo_name)
     text += s + '\n'
 
 # append text to target file
